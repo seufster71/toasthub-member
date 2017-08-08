@@ -61,10 +61,15 @@ function memberLayout(instanceName){
 		
 		var col1 = document.createElement("DIV");
 		col1.className = "col-md-4";
-			var copyright = document.createElement("SPAN");
-			copyright.className = "copyright";
-			copyright.innerHTML = "Copyright &copy; Cborgtech 2017";
-			col1.appendChild(copyright);
+			var ul3 = document.createElement("UL");
+			ul3.className = "list-inline quicklinks";
+			col1.appendChild(ul3);
+			var li41 = document.createElement("LI");
+			li41.innerHTML = "<span class='copyright' >Copyright &copy;</span>";
+			ul3.appendChild(li41);
+			var li42 = document.createElement("LI");
+			li42.innerHTML = "<a id='MemberArea' href='#'>Cborgtech 2017</a>";
+			ul3.appendChild(li42);
 		container.appendChild(col1);
 		
 		var col2 = document.createElement("DIV");
