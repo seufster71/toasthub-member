@@ -33,7 +33,7 @@ import org.toasthub.core.general.model.RestResponse;
 import org.toasthub.core.general.service.EntityManagerMainSvc;
 import org.toasthub.core.general.service.MenuSvc;
 import org.toasthub.core.general.service.UtilSvc;
-import org.toasthub.core.preference.model.AppCachePage;
+import org.toasthub.core.preference.model.AppCachePageUtil;
 import org.toasthub.security.model.User;
 import org.toasthub.security.model.UserContext;
 import org.toasthub.security.repository.UsersDao;
@@ -55,7 +55,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	MenuSvc menuSvc;
 	
 	@Autowired 
-	AppCachePage appCachePage;
+	AppCachePageUtil appCachePageUtil;
 	
 	@Autowired
 	@Qualifier("UsersDao")
@@ -77,7 +77,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		switch (action) {
 		case "INIT":
 			request.addParam("appPageParamLoc", "response");
-			appCachePage.getPageInfo(request,response);
+			appCachePageUtil.getPageInfo(request,response);
 			this.init(request, response);
 			break;
 		case "INIT_MENU":
@@ -86,11 +86,11 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			break;
 		case "INIT_PROFILE":
 			request.addParam("appPageParamLoc", "response");
-			appCachePage.getPageInfo(request,response);
+			appCachePageUtil.getPageInfo(request,response);
 			this.initProfile(request,response);
 			break;
 		case "SAVE_PROFILE":
-			appCachePage.getPageInfo(request,response);
+			appCachePageUtil.getPageInfo(request,response);
 			this.saveProfile(request,response);
 			break;
 		default:
