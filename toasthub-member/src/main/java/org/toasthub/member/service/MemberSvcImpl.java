@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.toasthub.core.general.handler.ServiceProcessor;
-import org.toasthub.core.general.model.AppCacheMenu;
+import org.toasthub.core.general.model.AppCacheMenuUtil;
 import org.toasthub.core.general.model.BaseEntity;
 import org.toasthub.core.general.model.MenuItem;
 import org.toasthub.core.general.model.RestRequest;
@@ -48,7 +48,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	EntityManagerMainSvc entityManagerMainSvc;
 	
 	@Autowired 
-	AppCacheMenu appCacheMenu;
+	AppCacheMenuUtil appCacheMenuUtil;
 	
 	@Autowired 
 	@Qualifier("MenuSvc")
@@ -116,7 +116,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		//TODO: NEED to add some separation for app and domain so there is no cross over
 		ArrayList<String> mylist = (ArrayList<String>) request.getParam(BaseEntity.MENUNAMES);
 		for (String menuName : mylist) {
-			menu = appCacheMenu.getMenu(menuName,(String)request.getParam(BaseEntity.MENUAPIVERSION),(String)request.getParam(BaseEntity.MENUAPPVERSION),(String)request.getParam(BaseEntity.LANG));
+			menu = appCacheMenuUtil.getMenu(menuName,(String)request.getParam(BaseEntity.MENUAPIVERSION),(String)request.getParam(BaseEntity.MENUAPPVERSION),(String)request.getParam(BaseEntity.LANG));
 			menuList.put(menuName, menu);
 		}
 
