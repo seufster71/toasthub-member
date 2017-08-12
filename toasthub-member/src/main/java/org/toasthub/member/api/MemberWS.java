@@ -16,10 +16,6 @@
 
 package org.toasthub.member.api;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,20 +26,20 @@ import org.toasthub.core.general.handler.ServiceProcessor;
 import org.toasthub.core.general.model.BaseEntity;
 import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
-import org.toasthub.core.general.model.ServiceCrawler;
-import org.toasthub.core.general.service.EntityManagerMainSvc;
+import org.toasthub.core.general.model.AppCacheServiceCrawler;
 import org.toasthub.core.general.service.UtilSvc;
 
 import com.fasterxml.jackson.annotation.JsonView;
-
 
 @RestController()
 @RequestMapping("/api/member")
 public class MemberWS {
 
-	@Autowired	EntityManagerMainSvc entityManagerMainSvc;
-	@Autowired UtilSvc utilSvc;
-	@Autowired ServiceCrawler serviceLocator;
+	@Autowired 
+	UtilSvc utilSvc;
+	
+	@Autowired 
+	AppCacheServiceCrawler serviceLocator;
 
 	@JsonView(View.Member.class)
 	@RequestMapping(value = "callService", method = RequestMethod.POST)
@@ -53,19 +49,15 @@ public class MemberWS {
 		// set defaults
 		utilSvc.setupDefaults(request);
 		// validate request
-		
-		// response
-		response.addParam(BaseEntity.CONTEXTPATH, entityManagerMainSvc.getAppName());
 				
 		// call service locator
-		ServiceProcessor x = serviceLocator.getService("MEMBER", (String) request.getParams().get(BaseEntity.SERVICE),
-				(String) request.getParam(BaseEntity.SVCAPIVERSION), (String) request.getParam(BaseEntity.SVCAPPVERSION),
-				entityManagerMainSvc.getAppDomain());
+		ServiceProcessor x = serviceLocator.getServiceProcessor("MEMBER", (String) request.getParams().get(BaseEntity.SERVICE),
+				(String) request.getParam(BaseEntity.SVCAPIVERSION), (String) request.getParam(BaseEntity.SVCAPPVERSION));
 		// process 
 		if (x != null) {
 			x.process(request, response);
 		} else {
-		
+			utilSvc.addStatus(RestResponse.ERROR, RestResponse.EXECUTIONFAILED, "Service is not available", response);
 		}
 		
 		return response;
