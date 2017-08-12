@@ -22,11 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.toasthub.core.general.api.View;
-import org.toasthub.core.general.handler.ServiceProcessor;
-import org.toasthub.core.general.model.BaseEntity;
+import org.toasthub.core.general.model.GlobalConstant;
 import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
+import org.toasthub.core.general.model.ServiceClass;
 import org.toasthub.core.general.model.AppCacheServiceCrawler;
+import org.toasthub.core.general.service.MicroServiceClient;
 import org.toasthub.core.general.service.UtilSvc;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -39,7 +40,10 @@ public class MemberWS {
 	UtilSvc utilSvc;
 	
 	@Autowired 
-	AppCacheServiceCrawler serviceLocator;
+	AppCacheServiceCrawler serviceCrawler;
+	
+	@Autowired
+	MicroServiceClient microServiceClient;
 
 	@JsonView(View.Member.class)
 	@RequestMapping(value = "callService", method = RequestMethod.POST)
@@ -51,11 +55,19 @@ public class MemberWS {
 		// validate request
 				
 		// call service locator
-		ServiceProcessor x = serviceLocator.getServiceProcessor("MEMBER", (String) request.getParams().get(BaseEntity.SERVICE),
-				(String) request.getParam(BaseEntity.SVCAPIVERSION), (String) request.getParam(BaseEntity.SVCAPPVERSION));
+		ServiceClass serviceClass = serviceCrawler.getServiceClass("MEMBER", (String) request.getParams().get(GlobalConstant.SERVICE),
+				(String) request.getParam(GlobalConstant.SVCAPIVERSION), (String) request.getParam(GlobalConstant.SVCAPPVERSION));
 		// process 
-		if (x != null) {
-			x.process(request, response);
+		if (serviceClass != null) {
+			if ("LOCAL".equals(serviceClass.getLocation()) && serviceClass.getServiceProcessor() != null) {
+				// use local service
+				serviceClass.getServiceProcessor().process(request, response);
+			} else {
+				// use remote service
+				request.addParam(GlobalConstant.MICROSERVICENAME, "service-member");
+				request.addParam(GlobalConstant.MICROSERVICEPATH, "api/member");
+				microServiceClient.process(request, response);
+			}
 		} else {
 			utilSvc.addStatus(RestResponse.ERROR, RestResponse.EXECUTIONFAILED, "Service is not available", response);
 		}
@@ -71,9 +83,9 @@ public class MemberWS {
 		input.getParts();
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		try {
-			String paramString = uploadForm.get(BaseEntity.PARAMS).get(0).getBodyAsString();
+			String paramString = uploadForm.get(GlobalConstant.PARAMS).get(0).getBodyAsString();
 			Map<String,Object> paramObj = new Gson().fromJson(paramString,Map.class);
-			Map<String,Object> params = (Map<String,Object>) paramObj.get(BaseEntity.PARAMS);
+			Map<String,Object> params = (Map<String,Object>) paramObj.get(GlobalConstant.PARAMS);
 			request.setParams(params);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -84,8 +96,8 @@ public class MemberWS {
 		request.addParam("uploadForm", uploadForm);
 		// call service locator
 
-		ServiceProcessor x = serviceLocator.getService("MEMBER", (String) request.getParams().get(BaseEntity.SERVICE),
-				(String) request.getParam(BaseEntity.SVCAPIVERSION), (String) request.getParam(BaseEntity.SVCAPPVERSION),
+		ServiceProcessor x = serviceLocator.getService("MEMBER", (String) request.getParams().get(GlobalConstant.SERVICE),
+				(String) request.getParam(GlobalConstant.SVCAPIVERSION), (String) request.getParam(GlobalConstant.SVCAPPVERSION),
 				entityManagerSvc.getAppDomain());
 		// process 
 		if (x != null) {
@@ -108,8 +120,8 @@ public class MemberWS {
 
 		
 		// call service locator
-		ServiceProcessor x = serviceLocator.getService("MEMBER", (String) request.getParams().get(BaseEntity.SERVICE),
-				(String) request.getParam(BaseEntity.SVCAPIVERSION), (String) request.getParam(BaseEntity.SVCAPPVERSION),
+		ServiceProcessor x = serviceLocator.getService("MEMBER", (String) request.getParams().get(GlobalConstant.SERVICE),
+				(String) request.getParam(GlobalConstant.SVCAPIVERSION), (String) request.getParam(GlobalConstant.SVCAPPVERSION),
 				entityManagerSvc.getAppDomain());
 		// process 
 		if (x != null) {

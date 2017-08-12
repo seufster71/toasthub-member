@@ -26,7 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.toasthub.core.general.handler.ServiceProcessor;
 import org.toasthub.core.general.model.AppCacheMenuUtil;
-import org.toasthub.core.general.model.BaseEntity;
+import org.toasthub.core.general.model.GlobalConstant;
 import org.toasthub.core.general.model.MenuItem;
 import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
@@ -69,7 +69,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	
 	// Processor
 	public void process(RestRequest request, RestResponse response) {
-		String action = (String) request.getParams().get(BaseEntity.ACTION);
+		String action = (String) request.getParams().get(GlobalConstant.ACTION);
 		
 		this.setupDefaults(request);
 		//appCachePage.getPageInfo(request,response);
@@ -101,9 +101,9 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	}
 	
 	public void init(RestRequest request, RestResponse response) {
-		response.addParam(BaseEntity.PAGELAYOUT,entityManagerMainSvc.getMemberLayout());
-		response.addParam(BaseEntity.APPNAME,entityManagerMainSvc.getAppName());
-		response.addParam(BaseEntity.HTMLPREFIX, entityManagerMainSvc.getHTMLPrefix());
+		response.addParam(GlobalConstant.PAGELAYOUT,entityManagerMainSvc.getMemberLayout());
+		response.addParam(GlobalConstant.APPNAME,entityManagerMainSvc.getAppName());
+		response.addParam(GlobalConstant.HTMLPREFIX, entityManagerMainSvc.getHTMLPrefix());
 		// default language code
 		if (userContext != null && userContext.getCurrentUser() != null){
 			response.addParam("userLang",(userContext.getCurrentUser().getLang()));
@@ -114,9 +114,9 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		Map<Integer,MenuItem> menu = null;
 		Map<String,Map<Integer,MenuItem>> menuList = new HashMap<String,Map<Integer,MenuItem>>();
 		//TODO: NEED to add some separation for app and domain so there is no cross over
-		ArrayList<String> mylist = (ArrayList<String>) request.getParam(BaseEntity.MENUNAMES);
+		ArrayList<String> mylist = (ArrayList<String>) request.getParam(GlobalConstant.MENUNAMES);
 		for (String menuName : mylist) {
-			menu = appCacheMenuUtil.getMenu(menuName,(String)request.getParam(BaseEntity.MENUAPIVERSION),(String)request.getParam(BaseEntity.MENUAPPVERSION),(String)request.getParam(BaseEntity.LANG));
+			menu = appCacheMenuUtil.getMenu(menuName,(String)request.getParam(GlobalConstant.MENUAPIVERSION),(String)request.getParam(GlobalConstant.MENUAPPVERSION),(String)request.getParam(GlobalConstant.LANG));
 			menuList.put(menuName, menu);
 		}
 
@@ -151,13 +151,13 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			// validate
 			utilSvc.validateParams(request, response);
 			
-			if ((Boolean) request.getParam(BaseEntity.VALID) == false) {
+			if ((Boolean) request.getParam(GlobalConstant.VALID) == false) {
 				utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "Validation Error", response);
 				return;
 			}
 			// get existing item
 			User user = usersDao.findUser(SecurityContextHolder.getContext().getAuthentication().getName());
-			request.addParam(BaseEntity.ITEM, user);
+			request.addParam(GlobalConstant.ITEM, user);
 			// marshall
 			utilSvc.marshallFields(request, response);
 			
@@ -178,22 +178,22 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	
 	public void setupDefaults(RestRequest request){
 		
-		if (!request.containsParam(BaseEntity.MENUAPIVERSION)){
-			request.addParam(BaseEntity.MENUAPIVERSION, "1.0");
+		if (!request.containsParam(GlobalConstant.MENUAPIVERSION)){
+			request.addParam(GlobalConstant.MENUAPIVERSION, "1.0");
 		}
 
-		if (!request.containsParam(BaseEntity.MENUAPPVERSION)){
-			request.addParam(BaseEntity.MENUAPPVERSION, "1.0");
+		if (!request.containsParam(GlobalConstant.MENUAPPVERSION)){
+			request.addParam(GlobalConstant.MENUAPPVERSION, "1.0");
 		}
 		
 	}
 	
 	public void setMenuDefaults(RestRequest request){
-		if (!request.containsParam(BaseEntity.MENUNAMES)){
+		if (!request.containsParam(GlobalConstant.MENUNAMES)){
 			ArrayList<String> myList = new ArrayList<String>();
 			myList.add("MEMBER_MENU_LEFT");
 			myList.add("MEMBER_MENU_RIGHT");
-			request.addParam(BaseEntity.MENUNAMES, myList);
+			request.addParam(GlobalConstant.MENUNAMES, myList);
 		}
 	}
 }
