@@ -36,7 +36,7 @@ import org.toasthub.core.menu.MenuSvc;
 import org.toasthub.core.preference.model.AppCachePageUtil;
 import org.toasthub.security.model.User;
 import org.toasthub.security.model.UserContext;
-import org.toasthub.security.repository.UsersDao;
+import org.toasthub.security.users.UsersDao;
 
 @Service("MemberSvc")
 public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
