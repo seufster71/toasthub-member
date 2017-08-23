@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.toasthub.member.service;
+package org.toasthub.member.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,15 +24,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.toasthub.core.common.EntityManagerMainSvc;
+import org.toasthub.core.common.UtilSvc;
 import org.toasthub.core.general.handler.ServiceProcessor;
 import org.toasthub.core.general.model.AppCacheMenuUtil;
 import org.toasthub.core.general.model.GlobalConstant;
 import org.toasthub.core.general.model.MenuItem;
 import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
-import org.toasthub.core.general.service.EntityManagerMainSvc;
-import org.toasthub.core.general.service.MenuSvc;
-import org.toasthub.core.general.service.UtilSvc;
+import org.toasthub.core.menu.MenuSvc;
 import org.toasthub.core.preference.model.AppCachePageUtil;
 import org.toasthub.security.model.User;
 import org.toasthub.security.model.UserContext;
