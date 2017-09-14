@@ -18,6 +18,7 @@ package org.toasthub.member.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,8 +112,8 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	}
 	
 	public void initMenu(RestRequest request, RestResponse response){
-		Map<Integer,MenuItem> menu = null;
-		Map<String,Map<Integer,MenuItem>> menuList = new HashMap<String,Map<Integer,MenuItem>>();
+		List<MenuItem> menu = null;
+		Map<String,List<MenuItem>> menuList = new HashMap<String,List<MenuItem>>();
 		//TODO: NEED to add some separation for app and domain so there is no cross over
 		ArrayList<String> mylist = (ArrayList<String>) request.getParam(GlobalConstant.MENUNAMES);
 		for (String menuName : mylist) {
