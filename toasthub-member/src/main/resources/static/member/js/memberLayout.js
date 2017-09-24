@@ -68,7 +68,7 @@ function memberLayout(instanceName){
 			li41.innerHTML = "<span class='copyright' >Copyright &copy;</span>";
 			ul3.appendChild(li41);
 			var li42 = document.createElement("LI");
-			li42.innerHTML = "<a id='MemberArea' href='#'>Cborgtech 2017</a>";
+			li42.innerHTML = "<a id='MemberArea' href='#'>ToastHUB 2017</a>";
 			ul3.appendChild(li42);
 		container.appendChild(col1);
 		
