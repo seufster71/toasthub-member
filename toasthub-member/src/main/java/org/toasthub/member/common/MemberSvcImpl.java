@@ -80,6 +80,12 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			request.addParam("appPageParamLoc", "response");
 			appCachePageUtil.getPageInfo(request,response);
 			this.init(request, response);
+			
+			// get menus
+			if (request.containsParam(GlobalConstant.MENUNAMES)){
+				this.initMenu(request, response);
+			}
+						
 			break;
 		case "INIT_MENU":
 			this.setMenuDefaults(request);
