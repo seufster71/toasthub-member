@@ -100,6 +100,9 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			appCachePageUtil.getPageInfo(request,response);
 			this.saveProfile(request,response);
 			break;
+		case "CHECK":
+			utilSvc.addStatus(RestResponse.INFO, RestResponse.SUCCESS, "Alive", response);
+			break;
 		default:
 			break;
 		}
