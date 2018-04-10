@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,8 +35,6 @@ import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
 import org.toasthub.core.menu.MenuSvc;
 import org.toasthub.core.preference.model.AppCachePageUtil;
-import org.toasthub.security.model.Permission;
-import org.toasthub.security.model.Role;
 import org.toasthub.security.model.User;
 import org.toasthub.security.model.UserContext;
 import org.toasthub.security.users.UsersDao;
@@ -139,7 +136,6 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		ArrayList<String> mylist = (ArrayList<String>) request.getParam(GlobalConstant.MENUNAMES);
 		for (String menuName : mylist) {
 			menu = appCacheMenuUtil.getMenu(menuName,(String)request.getParam(GlobalConstant.MENUAPIVERSION),(String)request.getParam(GlobalConstant.MENUAPPVERSION),(String)request.getParam(GlobalConstant.LANG));
-			validateMenus(menu);
 			menuList.put(menuName, menu);
 		}
 		
@@ -213,31 +209,4 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		}
 	}
 	
-	public void validateMenus(List<MenuItem> menu) {
-		Set<Role> roles = userContext.getCurrentUser().getRoles();
-		for(Role r : roles) {
-			if ("M".equals(r.getCode())) {
-				Set<Permission> permissions = r.getPermissions();
-				for(Permission p : permissions){
-					
-				}
-			}
-		}
-	}
-	
-	public Map<String,Permission> effectivePermissions() {
-		Map<String,Permission> perms = new HashMap<String,Permission>();
-		Set<Role> roles = userContext.getCurrentUser().getRoles();
-		for(Role r : roles) {
-			Set<Permission> permissions = r.getPermissions();
-			for(Permission p : permissions){
-				if (perms.containsKey(p.getCode())){
-					
-				} else {
-					perms.put(p.getCode(), p);
-				}
-			}
-		}
-		return perms;
-	}
 }
