@@ -21,9 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.toasthub.core.common.EntityManagerMainSvc;
 import org.toasthub.core.common.UtilSvc;
@@ -64,6 +69,12 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	
 	@Autowired 
 	UserContext userContext;
+	
+	@Autowired
+	HttpServletRequest servletRequest;
+	@Autowired
+	HttpServletResponse servletResponse;
+
 
 	// Constructors
 	public MemberSvcImpl() {}
@@ -81,7 +92,6 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		} else {
 			utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "User is not authenticated", response);
 		}
-		response.addParam("fullname", user.getFirstname());
 		
 		switch (action) {
 		case "INIT":
@@ -93,7 +103,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			if (request.containsParam(GlobalConstant.MENUNAMES)){
 				this.initMenu(request, response);
 			}
-						
+			response.addParam("USER", user);
 			break;
 		case "INIT_MENU":
 			this.setMenuDefaults(request);
@@ -110,6 +120,9 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			break;
 		case "CHECK":
 			utilSvc.addStatus(RestResponse.INFO, RestResponse.SUCCESS, "Alive", response);
+			break;
+		case "LOGOUT":
+			logout(request, response);
 			break;
 		default:
 			break;
@@ -209,4 +222,14 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		}
 	}
 	
+	public void logout(RestRequest request, RestResponse response) {
+		// invalidate user context and terminate session
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(servletRequest, servletResponse, auth);
+		}
+		utilSvc.addStatus(RestResponse.INFO, RestResponse.SUCCESS, "Good Bye", response);
+		// log user activity
+		
+	}
 }
