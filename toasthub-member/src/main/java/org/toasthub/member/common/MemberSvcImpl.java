@@ -97,7 +97,6 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		case "INIT":
 			request.addParam("appPageParamLoc", "response");
 			appCachePageUtil.getPageInfo(request,response);
-			this.init(request, response);
 			
 			// get menus
 			if (request.containsParam(GlobalConstant.MENUNAMES)){
@@ -127,18 +126,6 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		default:
 			break;
 		}
-		
-	
-	}
-	
-	public void init(RestRequest request, RestResponse response) {
-		response.addParam(GlobalConstant.PAGELAYOUT,entityManagerMainSvc.getMemberLayout());
-		response.addParam(GlobalConstant.APPNAME,entityManagerMainSvc.getAppName());
-		response.addParam(GlobalConstant.HTMLPREFIX, entityManagerMainSvc.getHTMLPrefix());
-		// default language code
-		if (userContext != null && userContext.getCurrentUser() != null){
-			response.addParam("userLang",(userContext.getCurrentUser().getLang()));
-		}
 	}
 	
 	public void initMenu(RestRequest request, RestResponse response){
@@ -159,7 +146,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		}
 	}
 	
-	public void initProfile(RestRequest request, RestResponse response) {
+	protected void initProfile(RestRequest request, RestResponse response) {
 		try {
 			User user = usersDao.findUser(SecurityContextHolder.getContext().getAuthentication().getName());
 			response.addParam("item", user);
@@ -170,7 +157,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		}
 	}
 	
-	public void saveProfile(RestRequest request, RestResponse response) {
+	protected void saveProfile(RestRequest request, RestResponse response) {
 		try {
 			
 			// validate
@@ -201,7 +188,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		}
 	}
 	
-	public void setupDefaults(RestRequest request){
+	protected void setupDefaults(RestRequest request){
 		
 		if (!request.containsParam(GlobalConstant.MENUAPIVERSION)){
 			request.addParam(GlobalConstant.MENUAPIVERSION, "1.0");
@@ -213,7 +200,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		
 	}
 	
-	public void setMenuDefaults(RestRequest request){
+	protected void setMenuDefaults(RestRequest request){
 		if (!request.containsParam(GlobalConstant.MENUNAMES)){
 			ArrayList<String> myList = new ArrayList<String>();
 			myList.add("MEMBER_MENU_LEFT");
@@ -222,7 +209,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		}
 	}
 	
-	public void logout(RestRequest request, RestResponse response) {
+	protected void logout(RestRequest request, RestResponse response) {
 		// invalidate user context and terminate session
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
