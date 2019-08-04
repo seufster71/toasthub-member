@@ -84,15 +84,8 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 		String action = (String) request.getParams().get(GlobalConstant.ACTION);
 		
 		this.setupDefaults(request);
-		//appCachePage.getPageInfo(request,response);
-		User user = null;
-		String name = "";
-		if (userContext != null && userContext.getCurrentUser() != null){
-			user = userContext.getCurrentUser();
-		} else {
-			utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "User is not authenticated", response);
-		}
 		
+
 		switch (action) {
 		case "INIT":
 			request.addParam("appPageParamLoc", "response");
@@ -102,7 +95,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			if (request.containsParam(GlobalConstant.MENUNAMES)){
 				this.initMenu(request, response);
 			}
-			response.addParam("USER", user);
+			response.setStatus(RestResponse.SUCCESS);
 			break;
 		case "INIT_MENU":
 			this.setMenuDefaults(request);
