@@ -40,6 +40,7 @@ import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
 import org.toasthub.core.menu.MenuSvc;
 import org.toasthub.core.preference.model.AppCachePageUtil;
+import org.toasthub.security.model.MyUserPrincipal;
 import org.toasthub.security.model.User;
 import org.toasthub.security.model.UserContext;
 import org.toasthub.security.users.UsersDao;
@@ -111,6 +112,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			this.saveProfile(request,response);
 			break;
 		case "CHECK":
+			response.addParam("USER", ((MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser());
 			utilSvc.addStatus(RestResponse.INFO, RestResponse.SUCCESS, "Alive", response);
 			break;
 		case "LOGOUT":
@@ -142,7 +144,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	protected void initProfile(RestRequest request, RestResponse response) {
 		try {
 			User user = usersDao.findUser(SecurityContextHolder.getContext().getAuthentication().getName());
-			response.addParam("item", user);
+			response.addParam("USER", user);
 		
 		} catch (Exception e) {
 			utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "Profile lookup failed", response);
