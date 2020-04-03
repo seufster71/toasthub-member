@@ -28,7 +28,7 @@ import org.toasthub.core.general.model.GlobalConstant;
 import org.toasthub.core.general.model.RestRequest;
 import org.toasthub.core.general.model.RestResponse;
 import org.toasthub.core.general.model.ServiceClass;
-import org.toasthub.core.preference.model.AppCachePageUtil;
+import org.toasthub.core.preference.model.PrefCacheUtil;
 import org.toasthub.core.serviceCrawler.MicroServiceClient;
 import org.toasthub.security.common.SecurityUtils;
 import org.toasthub.security.model.MyUserPrincipal;
@@ -47,7 +47,7 @@ public class MemberWS {
 	AppCacheServiceCrawler serviceCrawler;
 	
 	@Autowired 
-	AppCachePageUtil appCachePageUtil;
+	PrefCacheUtil prefCacheUtil;
 	
 	@Autowired
 	MicroServiceClient microServiceClient;
@@ -79,7 +79,7 @@ public class MemberWS {
 						microServiceClient.process(request, response);
 					}
 				} else {
-					utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACCESSDENIED, appCachePageUtil.getGlobalText("GLOBAL_SERVICE", "GLOBAL_SERVICE_ACCESS_DENIED",principal.getUser().getLang()), response);
+					utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACCESSDENIED, prefCacheUtil.getGlobalText("GLOBAL_SERVICE", "GLOBAL_SERVICE_ACCESS_DENIED",principal.getUser().getLang()), response);
 				}
 			} else {
 				utilSvc.addStatus(RestResponse.ERROR, RestResponse.EXECUTIONFAILED, "Service is not available", response);
