@@ -79,7 +79,7 @@ public class MemberWS {
 						microServiceClient.process(request, response);
 					}
 				} else {
-					utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACCESSDENIED, prefCacheUtil.getGlobalText("GLOBAL_SERVICE", "GLOBAL_SERVICE_ACCESS_DENIED",principal.getUser().getLang()), response);
+					utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACCESSDENIED, prefCacheUtil.getPrefText("GLOBAL_SERVICE", "GLOBAL_SERVICE_ACCESS_DENIED",principal.getUser().getLang()), response);
 				}
 			} else {
 				utilSvc.addStatus(RestResponse.ERROR, RestResponse.EXECUTIONFAILED, "Service is not available", response);
