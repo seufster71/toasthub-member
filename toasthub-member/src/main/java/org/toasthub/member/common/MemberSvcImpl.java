@@ -17,6 +17,7 @@
 package org.toasthub.member.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,6 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	// Processor
 	public void process(RestRequest request, RestResponse response) {
 		String action = (String) request.getParams().get(GlobalConstant.ACTION);
-		
 		this.setupDefaults(request);
 		
 
@@ -144,7 +144,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	protected void initProfile(RestRequest request, RestResponse response) {
 		try {
 			User user = usersDao.findUser(SecurityContextHolder.getContext().getAuthentication().getName());
-			response.addParam("USER", user);
+			response.addParam(GlobalConstant.ITEM, user);
 		
 		} catch (Exception e) {
 			utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "Profile lookup failed", response);
