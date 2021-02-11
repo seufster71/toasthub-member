@@ -69,9 +69,6 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 	@Qualifier("UsersDao")
 	UsersDao usersDao;
 	
-	@Autowired 
-	UserContext userContext;
-	
 	@Autowired
 	HttpServletRequest servletRequest;
 	@Autowired
@@ -108,6 +105,10 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			this.initProfile(request,response);
 			break;
 		case "SAVE_PROFILE":
+			if (!request.containsParam(PrefCacheUtil.PREFFORMKEYS)) {
+				List<String> forms =  new ArrayList<String>(Arrays.asList("MEMBER_PROFILE_FORM"));
+				request.addParam(PrefCacheUtil.PREFFORMKEYS, forms);
+			}
 			prefCacheUtil.getPrefInfo(request,response);
 			this.saveProfile(request,response);
 			break;
@@ -159,7 +160,7 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			utilSvc.validateParams(request, response);
 			
 			if ((Boolean) request.getParam(GlobalConstant.VALID) == false) {
-				utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "Validation Error", response);
+				utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, prefCacheUtil.getPrefText("GLOBAL_SERVICE", "GLOBAL_SERVICE_VALIDATION_ERR",prefCacheUtil.getLang(request)), response);
 				return;
 			}
 			// get existing item
@@ -171,14 +172,12 @@ public class MemberSvcImpl implements ServiceProcessor, MemberSvc {
 			// user
 			usersDao.updateUser(request, response);
 		
-			// refresh user session info
-			if (userContext != null && userContext.getCurrentUser() != null){
-				userContext.setCurrentUser(user);
-			}
-			
-			utilSvc.addStatus(RestResponse.INFO, RestResponse.SUCCESS, "Save Successful", response);
+			// update security
+			((MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().setLang(user.getLang());
+
+			utilSvc.addStatus(RestResponse.INFO, RestResponse.SUCCESS, prefCacheUtil.getPrefText( "GLOBAL_SERVICE", "GLOBAL_SERVICE_SAVE_SUCCESS", prefCacheUtil.getLang(request)), response);
 		} catch (Exception e) {
-			utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, "Save failed", response);
+			utilSvc.addStatus(RestResponse.ERROR, RestResponse.ACTIONFAILED, prefCacheUtil.getPrefText( "GLOBAL_SERVICE", "GLOBAL_SERVICE_SAVE_FAIL", prefCacheUtil.getLang(request)), response);
 			e.printStackTrace();
 		}
 	}
